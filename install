@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+APP=teamcode
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+ORANGE='\033[38;2;255;140;0m'
+NC='\033[0m' # No Color
+
+echo -e "${ORANGE}⌬ TeamCode${NC} - Installing via go install..."
+echo ""
+
+# Check if Go is installed
+if ! command -v go >/dev/null 2>&1; then
+    echo -e "${RED}Go is not installed. Please install Go first: https://go.dev/doc/install${NC}"
+    exit 1
+fi
+
+# Install using go install
+echo -e "${GREEN}Running: go install github.com/opencode-ai/teamcode@latest${NC}"
+go install github.com/opencode-ai/teamcode@latest
+
+# Verify installation
+if command -v teamcode >/dev/null 2>&1; then
+    echo ""
+    echo -e "${GREEN}✅ TeamCode installed successfully!${NC}"
+    echo -e "Run ${ORANGE}teamcode${NC} to start."
+else
+    # Add GOBIN to PATH if not already there
+    GOBIN=$(go env GOPATH)/bin
+    if [[ ":$PATH:" != *":$GOBIN:"* ]]; then
+        echo ""
+        echo -e "${YELLOW}Note: You may need to add $GOBIN to your PATH${NC}"
+        echo -e "Add this to your shell config:"
+        echo -e "  ${GREEN}export PATH=\$PATH:$GOBIN${NC}"
+    fi
+fi
